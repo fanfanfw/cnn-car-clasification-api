@@ -12,12 +12,12 @@ class PredictionResult(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "predicted_class": "vios_g",
-                "confidence": 0.9523,
+                "predicted_class": "label_a",
+                "confidence": 0.93,
                 "probabilities": {
-                    "vios_g": 0.9523,
-                    "alphard_sc": 0.0312,
-                    "harrier_z": 0.0165
+                    "label_a": 0.93,
+                    "label_b": 0.05,
+                    "label_c": 0.02
                 },
                 "tta_enabled": False
             }

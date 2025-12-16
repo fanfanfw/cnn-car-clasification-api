@@ -39,6 +39,7 @@ REST API for classifying car images.
 - Batch prediction (up to 10 images)
 - Test Time Augmentation (TTA) for improved accuracy
 - API Key authentication
+- Model classes are loaded from the checkpoint; use `/api/v1/classes` to see what the current model supports
 
 ### Authentication
 Include `X-API-Key` header in all requests to `/api/v1/*` endpoints.
