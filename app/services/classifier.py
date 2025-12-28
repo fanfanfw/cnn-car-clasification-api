@@ -31,19 +31,44 @@ class CarClassifier:
         checkpoint = torch.load(path, map_location=self.device, weights_only=False)
         self.idx_to_class = checkpoint["idx_to_class"]
         num_classes = len(self.idx_to_class)
-        
-        self.model = models.resnet18(weights=None)
-        self.model.fc = nn.Sequential(
-            nn.Dropout(p=0.3),
-            nn.Linear(self.model.fc.in_features, num_classes)
-        )
+
+        train_config = checkpoint.get("train_config") or {}
+        model_name = train_config.get("model_name", "resnet18")
+        dropout = float(train_config.get("dropout", 0.3))
+        img_size = int(train_config.get("img_size", settings.img_size))
+
+        self.model = self._build_model(model_name=model_name, num_classes=num_classes, dropout=dropout)
         
         self.model.load_state_dict(checkpoint["model_state"])
         self.model.to(self.device)
         self.model.eval()
         
-        self._setup_transforms(settings.img_size)
+        self._setup_transforms(img_size)
         self._loaded = True
+
+    def _build_model(self, model_name: str, num_classes: int, dropout: float) -> nn.Module:
+        if model_name == "resnet18":
+            model = models.resnet18(weights=None)
+            model.fc = nn.Sequential(nn.Dropout(p=dropout), nn.Linear(model.fc.in_features, num_classes))
+            return model
+
+        if model_name == "efficientnet":
+            model = models.efficientnet_b0(weights=None)
+            in_features = model.classifier[1].in_features
+            model.classifier = nn.Sequential(nn.Dropout(p=dropout, inplace=True), nn.Linear(in_features, num_classes))
+            return model
+
+        if model_name == "mobilenet":
+            model = models.mobilenet_v3_small(weights=None)
+            model.classifier = nn.Sequential(
+                nn.Linear(model.classifier[0].in_features, 1024),
+                nn.Hardswish(inplace=True),
+                nn.Dropout(p=dropout, inplace=True),
+                nn.Linear(1024, num_classes),
+            )
+            return model
+
+        raise ValueError(f"Unknown model: {model_name}")
     
     def _setup_transforms(self, img_size: int) -> None:
         mean = [0.485, 0.456, 0.406]

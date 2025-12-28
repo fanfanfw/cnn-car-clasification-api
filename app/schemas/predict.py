@@ -55,7 +55,30 @@ class HealthResponse(BaseModel):
     status: str = "healthy"
     model_loaded: bool
     device: str
+    hierarchical_loaded: bool = False
+    hierarchical_device: str = "not loaded"
     version: str
+
+
+class HierStageResult(BaseModel):
+    predicted: str = Field(..., description="Predicted label for the stage")
+    confidence: float = Field(..., ge=0, le=1, description="Confidence score (0-1)")
+    probabilities: Dict[str, float] = Field(..., description="Probabilities for this stage")
+
+
+class HierPredictionResult(BaseModel):
+    final_label: str = Field(..., description="Final predicted label (e.g. X_gen3facelift)")
+    final_display: str = Field(..., description="Human friendly label with years")
+    needs_review: bool = Field(..., description="True if prediction confidence is low")
+    policy_applied: Dict[str, object] = Field(..., description="Policy/threshold application details")
+    stage1: HierStageResult
+    stage2: HierStageResult
+
+
+class HierPredictionResponse(BaseModel):
+    success: bool = True
+    message: str = "Prediction successful"
+    data: HierPredictionResult
 
 
 class ErrorResponse(BaseModel):

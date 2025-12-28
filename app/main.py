@@ -7,6 +7,8 @@ from fastapi.responses import JSONResponse
 from app.config import get_settings
 from app.routers import health, predict
 from app.services.classifier import classifier
+from app.services.hier_classifier import hier_classifier
+from app.routers import predict_hier
 
 
 @asynccontextmanager
@@ -19,6 +21,13 @@ async def lifespan(app: FastAPI):
         print(f"Available classes: {classifier.classes}")
     except Exception as e:
         print(f"Failed to load model: {e}")
+
+    print("Loading hierarchical models...")
+    try:
+        hier_classifier.load_models()
+        print(f"Hierarchical models loaded successfully on {hier_classifier.device_name}")
+    except Exception as e:
+        print(f"Failed to load hierarchical models: {e}")
     yield
     print("Shutting down...")
 
@@ -66,6 +75,7 @@ Include `X-API-Key` header in all requests to `/api/v1/*` endpoints.
     
     app.include_router(health.router)
     app.include_router(predict.router)
+    app.include_router(predict_hier.router)
     
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):

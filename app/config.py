@@ -11,6 +11,17 @@ class Settings(BaseSettings):
     
     model_path: str = "models/best_model.pt"
     img_size: int = 224
+
+    # Hierarchical (2-stage) model paths
+    hier_variant_model_path: str = "models_hier/variant.pt"
+    hier_gen_sa_model_path: str = "models_hier/gen_sa.pt"
+    hier_gen_sc_model_path: str = "models_hier/gen_sc.pt"
+    hier_gen_x_model_path: str = "models_hier/gen_x.pt"
+
+    # Hierarchical safety thresholds
+    hier_variant_min_conf: float = 0.0
+    hier_gen_min_conf: float = 0.0
+    hier_x_prefacelift_min_prob: float = 0.0
     
     host: str = "0.0.0.0"
     port: int = 8000

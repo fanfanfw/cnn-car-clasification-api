@@ -12,8 +12,8 @@ __pycache__/
 .pytest_cache/
 
 # Model files (large binary files)
-models/*.pt
-models/*.pth
+models*/*.pt
+models*/*.pth
 
 # IDE
 .vscode/
