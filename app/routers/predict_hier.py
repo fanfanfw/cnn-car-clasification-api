@@ -10,7 +10,7 @@ from app.services.hier_classifier import hier_classifier
 
 router = APIRouter(
     prefix="/api/v1",
-    tags=["Prediction (Hierarchical)"],
+    tags=["Prediction (ALPHARD SC/SA/X)"],
     dependencies=[Depends(verify_api_key)],
 )
 

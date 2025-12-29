@@ -14,7 +14,7 @@ from app.services.classifier import classifier
 
 router = APIRouter(
     prefix="/api/v1",
-    tags=["Prediction"],
+    tags=["Prediction (ALPHARD SC, HARRIER Z, VIOS G)"],
     dependencies=[Depends(verify_api_key)]
 )
 
